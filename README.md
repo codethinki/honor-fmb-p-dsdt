@@ -15,6 +15,17 @@ Linux turns the unused power resource off.
 `_PS0` that waits for the controller to boot. The chinese version has the same `TPL1`
 layout and probably needs the same change, but it is untested and not patched yet.
 
+Once powered, the touchscreen also exposes a bogus keyboard interface
+(`FTSC1000:00 2808:5662 UNKNOWN`) that sends phantom key presses (mic LED flicker,
+stray hotkeys). Inhibit it with a udev rule, for example
+`/etc/udev/rules.d/99-honor-touchscreen-keyboard.rules`:
+
+```
+SUBSYSTEM=="input", KERNEL=="input*", ATTR{name}=="FTSC1000:00 2808:5662 UNKNOWN", ATTR{inhibited}="1"
+```
+
+Apply it with `sudo udevadm control --reload-rules && sudo udevadm trigger --action=change --subsystem-match=input`, or reboot.
+
 ## Different version of BIOS for chinese and global version
 
 There are at least two version of BIOS of this notebook was found. 
